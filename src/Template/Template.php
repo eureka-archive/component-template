@@ -15,56 +15,41 @@ use Eureka\Component\Template\Pattern;
  * Template class
  *
  * @author Romain Cottard
- * @version 2.1.0
  */
 class Template implements TemplateInterface
 {
     /**
-     * List of variables for templates
-     *
-     * @var    array $vars
+     * @var array $vars List of variables for templates
      */
     protected $vars = array();
 
     /**
-     * Collection of patterns
-     *
-     * @var Pattern\PatternCollection $patternCollection
+     * @var Pattern\PatternCollection $patternCollection Collection of patterns
      */
     protected $patternCollection = null;
 
     /**
-     * Template file.
-     *
-     * @var    string $file
+     * @var string $file Template file.
      */
     protected $file = '';
 
     /**
-     * Template file compiled.
-     *
-     * @var    string $fileCompiled
+     * @var string $fileCompiled Template file compiled.
      */
     protected $fileCompiled = '';
 
     /**
-     * Path to module templates.
-     *
-     * @var    string $pathModule
+     * @var string $pathModule Path to module templates.
      */
     protected static $pathModule = '';
 
     /**
-     * Path for template compiled
-     *
-     * @var string $pathCompiled
+     * @var string $pathCompiled Path for template compiled
      */
     protected static $pathCompiled = '/tmp/Eureka/tpl/';
 
     /**
-     * If force compilation
-     *
-     * @var boolean
+     * @var bool If force compilation
      */
     protected static $forceCompilation = false;
 
@@ -74,7 +59,6 @@ class Template implements TemplateInterface
      * @param  string                    $template
      * @param  array                     $vars
      * @param  Pattern\PatternCollection $collection
-     * @return Template
      * @throws \Exception
      */
     public function __construct($template, $collection = null, Array $vars = array())
@@ -87,9 +71,9 @@ class Template implements TemplateInterface
             $this->patternCollection = $collection;
         } else {
             $this->patternCollection = new Pattern\PatternCollection();
-            $this->patternCollection->add(new Pattern\PatternNamespace());
             $this->patternCollection->add(new Pattern\PatternBlock());
             $this->patternCollection->add(new Pattern\PatternPartial());
+            $this->patternCollection->add(new Pattern\PatternNamespace());
             $this->patternCollection->add(new Pattern\PatternEcho());
             $this->patternCollection->add(new Pattern\PatternMain());
         }
@@ -114,7 +98,8 @@ class Template implements TemplateInterface
         $templateContent = file_get_contents($this->file);
 
         foreach ($this->patternCollection as $pattern) {
-            $templateContent = $pattern->setContent($templateContent)->render();
+            $templateContent = $pattern->setContent($templateContent)
+                ->render();
         }
 
         if (false === file_put_contents($this->fileCompiled, $templateContent)) {
@@ -125,7 +110,7 @@ class Template implements TemplateInterface
     /**
      * Render Template.
      *
-     * @return  string
+     * @return string
      * @throws \Exception
      */
     public function render()
@@ -145,9 +130,9 @@ class Template implements TemplateInterface
     /**
      * Set Template var.
      *
-     * @param    string $name
-     * @param    mixed  $value
-     * @return   Template
+     * @param  string $name
+     * @param  mixed  $value
+     * @return self
      */
     public function setVar($name, $value = null)
     {
@@ -159,8 +144,8 @@ class Template implements TemplateInterface
     /**
      * Appends vars to existing Template vars.
      *
-     * @param    array $vars
-     * @return   Template
+     * @param  array $vars
+     * @return self
      */
     public function appendVars(Array $vars)
     {
@@ -173,7 +158,7 @@ class Template implements TemplateInterface
      * Set Template vars.
      *
      * @param  array $vars
-     * @return Template
+     * @return self
      */
     public function setVars(Array $vars)
     {
@@ -185,10 +170,10 @@ class Template implements TemplateInterface
     /**
      * Include partial.
      *
-     * @param    string  $template
-     * @param    array   $vars
-     * @return   string Content
-     * @throws  \Exception
+     * @param  string $template
+     * @param  array  $vars
+     * @return string Content
+     * @throws \Exception
      */
     public static function partial($template, array $vars = array())
     {
@@ -200,7 +185,7 @@ class Template implements TemplateInterface
     /**
      * Set path for compiled templates.
      *
-     * @param string $pathCompiled
+     * @param  string $pathCompiled
      * @return void
      * @throws \Exception
      */
@@ -220,7 +205,7 @@ class Template implements TemplateInterface
     /**
      * Set if force compilation of template
      *
-     * @param boolean $forceCompilation
+     * @param  bool $forceCompilation
      * @return void
      */
     public static function setForceCompilation($forceCompilation = true)

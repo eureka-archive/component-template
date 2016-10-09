@@ -13,14 +13,11 @@ namespace Eureka\Component\Template\Pattern;
  * Pattern abstract class for template
  *
  * @author Romain Cottard
- * @version 2.1.0
  */
-abstract class PatternAbstract implements Pattern
+abstract class PatternAbstract implements PatternInterface
 {
     /**
-     * Template Content.
-     *
-     * @var string $templateContent
+     * @var string $templateContent Template Content.
      */
     protected $templateContent = '';
 
@@ -28,7 +25,6 @@ abstract class PatternAbstract implements Pattern
      * Pattern constructor.
      *
      * @param  string $templateContent
-     * @return PatternAbstract
      */
     public function __construct($templateContent = '')
     {
@@ -37,8 +33,9 @@ abstract class PatternAbstract implements Pattern
 
     /**
      * Set template content
+     *
      * @param  string $templateContent
-     * @return PatternAbstract
+     * @return static
      */
     public function setContent($templateContent)
     {

@@ -13,7 +13,6 @@ namespace Eureka\Component\Template\Pattern;
  * Pattern Block class.
  *
  * @author Romain Cottard
- * @version 2.1.0
  */
 class PatternBlock extends PatternAbstract
 {
@@ -48,13 +47,13 @@ class PatternBlock extends PatternAbstract
     public function render()
     {
         //~ Search block / endblock
-        $pattern = '`{% ?block:([^%]+) ?%}(.*?){% ?endblock ?%}`is';
+        $pattern = '`{% ?block:([^%]+)? ?%}(.*?)?{% ?endblock ?%}`is';
         $replace = array();
 
         if ((bool) preg_match_all($pattern, $this->templateContent, $matches)) {
             foreach ($matches[0] as $index => $string) {
-                $block              = trim($matches[1][$index]);
-                $content            = $matches[2][$index];
+                $block            = trim($matches[1][$index]);
+                $content          = $matches[2][$index];
                 $replace[$string] = '<?php Block::getInstance()->begin(); ?>' . $content . '<?php Block::getInstance()->end(\'' . addslashes($block) . '\'); ?>';
             }
 
@@ -67,7 +66,7 @@ class PatternBlock extends PatternAbstract
         //~ Search for getblock
         if ((bool) preg_match_all($pattern, $this->templateContent, $matches)) {
             foreach ($matches[0] as $index => $replaceString) {
-                $block              = trim($matches[1][$index]);
+                $block                   = trim($matches[1][$index]);
                 $replace[$replaceString] = '<?=Block::getInstance()->get(\'' . addslashes($block) . '\'); ?>';
             }
 
@@ -76,5 +75,4 @@ class PatternBlock extends PatternAbstract
 
         return $this->templateContent;
     }
-
 }

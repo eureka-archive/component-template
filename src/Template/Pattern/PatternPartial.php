@@ -13,7 +13,6 @@ namespace Eureka\Component\Template\Pattern;
  * Pattern Partial class.
  *
  * @author Romain Cottard
- * @version 2.1.0
  */
 class PatternPartial extends PatternAbstract
 {
@@ -38,23 +37,23 @@ class PatternPartial extends PatternAbstract
      */
     public function render()
     {
-        $pattern = '`{% ?partial:([^,%]+)([^%]*)%}`is';
+        $pattern = '`{% ?partial:([^,%]+)([^%]*)?%}`is';
         $replace = array();
 
         if ((bool) preg_match_all($pattern, $this->templateContent, $matches)) {
 
             foreach ($matches[0] as $index => $replaceString) {
-                $template = '\'' . trim($matches[1][$index]) . '\'';
-                $params   = (!empty($matches[2][$index]) ? trim($matches[2][$index], ' ,()') : '');
-                $tmp      = explode(',', $params);
-                $params   = array();
-                if (!empty($params)) {
+                $template     = '\'' . trim($matches[1][$index]) . '\'';
+                $paramsString = (!empty($matches[2][$index]) ? trim($matches[2][$index], ' ,()') : '');
+                $tmp          = explode(',', $paramsString);
+                $params       = array();
+                if (!empty($paramsString)) {
                     foreach ($tmp as $param) {
                         $params[] = '\'' . substr(trim($param), 1) . '\' => ' . trim($param);
                     }
                 }
 
-                $params             = implode(',', $params);
+                $params                  = implode(',', $params);
                 $replace[$replaceString] = '<?=Template::partial(' . $template . ', array(' . $params . ')); ?>';
             }
 
@@ -63,5 +62,4 @@ class PatternPartial extends PatternAbstract
 
         return $this->templateContent;
     }
-
 }

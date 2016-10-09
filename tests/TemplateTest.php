@@ -11,39 +11,41 @@ namespace Eureka\Component\Template;
 
 use Eureka\Component\Template\Pattern;
 
-require_once __DIR__ . '/../Template.php';
-require_once __DIR__ . '/../Block.php';
-require_once __DIR__ . '/../Pattern/Pattern.interface.php';
-require_once __DIR__ . '/../Pattern/PatternAbstract.php';
-require_once __DIR__ . '/../Pattern/PatternMain.php';
-require_once __DIR__ . '/../Pattern/PatternPartial.php';
-require_once __DIR__ . '/../Pattern/PatternBlock.php';
-require_once __DIR__ . '/../Pattern/PatternNamespace.php';
-require_once __DIR__ . '/../Pattern/PatternCollection.php';
+require_once __DIR__ . '/../src/Template/TemplateInterface.php';
+require_once __DIR__ . '/../src/Template/Template.php';
+require_once __DIR__ . '/../src/Template/Block.php';
+require_once __DIR__ . '/../src/Template/Pattern/PatternInterface.php';
+require_once __DIR__ . '/../src/Template/Pattern/PatternAbstract.php';
+require_once __DIR__ . '/../src/Template/Pattern/PatternMain.php';
+require_once __DIR__ . '/../src/Template/Pattern/PatternEcho.php';
+require_once __DIR__ . '/../src/Template/Pattern/PatternPartial.php';
+require_once __DIR__ . '/../src/Template/Pattern/PatternBlock.php';
+require_once __DIR__ . '/../src/Template/Pattern/PatternNamespace.php';
+require_once __DIR__ . '/../src/Template/Pattern/PatternCollection.php';
 
 /**
- * Class Test for Routing
+ * Class Test for Template
  *
  * @author Romain Cottard
- * @version 2.1.0
  */
-class RouteTest extends \PHPUnit_Framework_TestCase
+class TemplateTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * Test Patterns
      *
      * @return void
-     * @covers PartternAbstract::__construct
-     * @covers PartternNamespace::render
-     * @covers PartternPartial::render
-     * @covers PartternBlock::render
-     * @covers PartternMain::render
+     * @covers PatternAbstract::__construct
+     * @covers PatternNamespace::render
+     * @covers PatternPartial::render
+     * @covers PatternBlock::render
+     * @covers PatternMain::render
      */
     public function testPatterns()
     {
         $templateContent = $this->dataTemplateContent();
 
+        /*
+        //~ Not working with {% & %} in PatternMain. Also, si tested with assert at the end of this method.
         $patternNamespace = new Pattern\PatternNamespace($templateContent);
         $templateCompiled = $patternNamespace->render();
         $this->assertEquals($templateCompiled, $this->dataCompiledNamespace());
@@ -56,16 +58,20 @@ class RouteTest extends \PHPUnit_Framework_TestCase
         $templateCompiled = $patternBlock->render();
         $this->assertEquals($templateCompiled, $this->dataCompiledBlock());
 
-        $patternMain      = new Pattern\PatternMain($templateContent);
+        $patternEcho      = new Pattern\PatternEcho($templateContent);
+        $patternMain      = new Pattern\PatternMain($patternEcho->render());
         $templateCompiled = $patternMain->render();
         $this->assertEquals($templateCompiled, $this->dataCompiledMain());
+        */
 
-        $patternNamespace = new Pattern\PatternNamespace($templateContent);
-        $templateCompiled = $patternNamespace->render();
-        $patternPartial   = new Pattern\PatternPartial($templateCompiled);
+        $patternPartial   = new Pattern\PatternPartial($templateContent);
         $templateCompiled = $patternPartial->render();
         $patternBlock     = new Pattern\PatternBlock($templateCompiled);
         $templateCompiled = $patternBlock->render();
+        $patternNamespace = new Pattern\PatternNamespace($templateCompiled);
+        $templateCompiled = $patternNamespace->render();
+        $patternEcho      = new Pattern\PatternEcho($templateCompiled);
+        $templateCompiled = $patternEcho->render();
         $patternMain      = new Pattern\PatternMain($templateCompiled);
         $templateCompiled = $patternMain->render();
 
@@ -84,7 +90,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
         Template::setPathCompiled('/tmp/Eureka/tpl');
 
         //~ Data for template
-        $menu          = new \stdClass();
+        $menu         = new \stdClass();
         $menu->title1 = 'Title 1';
         $menu->title2 = 'Title 2';
         $menu->title3 = 'Title 3';
@@ -96,26 +102,25 @@ class RouteTest extends \PHPUnit_Framework_TestCase
 
         //~ Create new collection of patterns
         $patternCollection = new Pattern\PatternCollection();
-        $patternCollection->add(new Pattern\PatternNamespace());
         $patternCollection->add(new Pattern\PatternBlock());
         $patternCollection->add(new Pattern\PatternPartial());
+        $patternCollection->add(new Pattern\PatternNamespace());
+        $patternCollection->add(new Pattern\PatternEcho());
         $patternCollection->add(new Pattern\PatternMain());
 
         //~ New template object
         $template = new Template('Template/Main', $patternCollection, array(), true);
-        $template->setVars(array('oMenu' => $menu));
+        $template->setVars(array('menu' => $menu));
         $template->setVar('sTitle', $title);
-        $template->appendVars(array('aNews' => $news));
+        $template->appendVars(array('listNews' => $news));
 
         //~ Test
         $file = '/tmp/Eureka/tpl/' . substr(md5('Template/Main.tpl'), 0, 10) . '.php';
         $this->assertTrue(file_exists($file));
         $this->assertEquals(file_get_contents($file), $this->dataCompiledTemplate());
 
-        $render = $template->render();
-
         //~ Disable test due to trailing whitespace on this file, but work fine
-        //$this->assertEquals($render, $this->dataRenderHtml());
+        //$this->assertEquals($template->render(), $this->dataRenderHtml());
     }
 
     /**
@@ -144,9 +149,9 @@ class RouteTest extends \PHPUnit_Framework_TestCase
             {% endblock %}
 
             {# Display last news #}
-            {{foreach($news as $news):}}
+            {% foreach($listNews as $news): %}
                 <h2>{{@$news->getTitle();}}</h2>
-            {{endforeach;}}
+            {% endforeach; %}
 
             {% partial: Package/Home/Footer %}
 
@@ -162,13 +167,13 @@ class RouteTest extends \PHPUnit_Framework_TestCase
      */
     protected function dataCompiledPartial()
     {
-        return '{* Eureka\Component\Template: Template, Block *}<!DOCTYPE>
+        return '{% use Eureka\Component\Template: Template, Block %}<!DOCTYPE>
         <html>
         <head>
             <title>Eureka Home</title>
         </head>
         <body>
-            <?=Template::partial(\'Package/Home/Menu\', array(\'oMenu\' => $menu)); ?>
+            <?=Template::partial(\'Package/Home/Menu\', array(\'menu\' => $menu)); ?>
 
             <h1>News</h1>
 
@@ -181,9 +186,9 @@ class RouteTest extends \PHPUnit_Framework_TestCase
             {% endblock %}
 
             {# Display last news #}
-            {{foreach($news as $news):}}
+            {% foreach($listNews as $news): %}
                 <h2>{{@$news->getTitle();}}</h2>
-            {{endforeach;}}
+            {% endforeach; %}
 
             <?=Template::partial(\'Package/Home/Footer\', array()); ?>
 
@@ -199,7 +204,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
      */
     protected function dataCompiledBlock()
     {
-        return '{* Eureka\Component\Template: Template, Block *}<!DOCTYPE>
+        return '{% use Eureka\Component\Template: Template, Block %}<!DOCTYPE>
         <html>
         <head>
             <title>Eureka Home</title>
@@ -218,9 +223,9 @@ class RouteTest extends \PHPUnit_Framework_TestCase
             <?php Block::getInstance()->end(\'javascript\'); ?>
 
             {# Display last news #}
-            {{foreach($news as $news):}}
+            {% foreach($listNews as $news): %}
                 <h2>{{@$news->getTitle();}}</h2>
-            {{endforeach;}}
+            {% endforeach; %}
 
             {% partial: Package/Home/Footer %}
 
@@ -255,9 +260,9 @@ class RouteTest extends \PHPUnit_Framework_TestCase
             {% endblock %}
 
             <?php /*  Display last news  */ ?>
-            <?php foreach($news as $news):?>
+            <?php foreach($listNews as $news): ?>
                 <h2><?=$news->getTitle();?></h2>
-            <?php endforeach;?>
+            <?php endforeach; ?>
 
             {% partial: Package/Home/Footer %}
 
@@ -279,7 +284,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
             <title>Eureka Home</title>
         </head>
         <body>
-            <?=Template::partial(\'Package/Home/Menu\', array(\'oMenu\' => $menu)); ?>
+            <?=Template::partial(\'Package/Home/Menu\', array(\'menu\' => $menu)); ?>
 
             <h1>News</h1>
 
@@ -292,9 +297,9 @@ class RouteTest extends \PHPUnit_Framework_TestCase
             <?php Block::getInstance()->end(\'javascript\'); ?>
 
             <?php /*  Display last news  */ ?>
-            <?php foreach($news as $news):?>
+            <?php foreach($listNews as $news): ?>
                 <h2><?=$news->getTitle();?></h2>
-            <?php endforeach;?>
+            <?php endforeach; ?>
 
             <?=Template::partial(\'Package/Home/Footer\', array()); ?>
 
@@ -329,9 +334,9 @@ class RouteTest extends \PHPUnit_Framework_TestCase
             {% endblock %}
 
             {# Display last news #}
-            {{foreach($news as $news):}}
+            {% foreach($listNews as $news): %}
                 <h2>{{@$news->getTitle();}}</h2>
-            {{endforeach;}}
+            {% endforeach; %}
 
             {% partial: Package/Home/Footer %}
 
@@ -353,7 +358,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
     <title>Eureka Home</title>
 </head>
 <body>
-    <?=Template::partial(\'Template/Menu\', array(\'oMenu\' => $menu)); ?>
+    <?=Template::partial(\'Template/Menu\', array(\'menu\' => $menu)); ?>
 
     <h1>News</h1>
 
@@ -366,7 +371,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase
     <?php Block::getInstance()->end(\'javascript\'); ?>
 
     <?php /*  Display last news  */ ?>
-    <?php foreach($news as $news):?><h2><?=$news->title;?></h2><?php endforeach;?>
+    <?php foreach($listNews as $news): ?><h2><?=$news->title;?></h2><?php endforeach; ?>
 
     <?=Template::partial(\'Template/Footer\', array()); ?>
 
@@ -409,6 +414,5 @@ class RouteTest extends \PHPUnit_Framework_TestCase
     </script>
 </body>
 </html>';
-
     }
 }

@@ -9,12 +9,10 @@
 
 namespace Eureka\Component\Template\Pattern;
 
-
 /**
  * Pattern Block class.
  *
  * @author Romain Cottard
- * @version 2.1.0
  */
 class PatternEcho extends PatternAbstract
 {
@@ -25,10 +23,10 @@ class PatternEcho extends PatternAbstract
      * <code>
      * # In Template:
      * #
-     * # ({@i$intVar}}
-     * # ({@f$floatVar}}
-     * # ({@s$stringVar}}
-     * # ({@e$stringVar}}
+     * # ({@i|$intVar}}
+     * # ({@f|$floatVar}}
+     * # ({@s|$stringVar}}
+     * # ({@e|$stringVar}}
      * # ({@$stringVar}}
      * #
      * # In Compiled template:

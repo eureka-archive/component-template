@@ -1,10 +1,10 @@
-{* Eureka\Component\Template: Template, Block *}<!DOCTYPE>
+{% use Eureka\Component\Template: Template, Block %}<!DOCTYPE>
 <html>
 <head>
     <title>Eureka Home</title>
 </head>
 <body>
-    {% partial: Template/Menu, $oMenu %}
+    {% partial: Template/Menu, $menu %}
 
     <h1>News</h1>
 
@@ -17,7 +17,7 @@
     {% endblock %}
 
     {# Display last news #}
-    {{foreach($aNews as $oNews):}}<h2>{{@$oNews->title;}}</h2>{{endforeach;}}
+    {% foreach($listNews as $news): %}<h2>{{@$news->title;}}</h2>{% endforeach; %}
 
     {% partial: Template/Footer %}
 

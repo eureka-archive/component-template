@@ -13,28 +13,21 @@ namespace Eureka\Component\Template;
  * Block template class
  *
  * @author Romain Cottard
- * @version 2.1.0
  */
 class Block
 {
     /**
-     * Class instance
-     *
-     * @var Block $instance
+     * @var Block $instance Class instance
      */
     protected static $instance = null;
 
     /**
-     * List of blocks html
-     *
-     * @var array $blocks
+     * @var array $blocks List of blocks html
      */
     protected $blocks = array();
 
     /**
      * Block constructor.
-     *
-     * @return Block
      */
     protected function __construct()
     {
@@ -59,8 +52,8 @@ class Block
     /**
      * Get block content.
      *
-     * @param    string $name
-     * @return   string
+     * @param  string $name
+     * @return string
      */
     public function get($name)
     {
@@ -74,8 +67,8 @@ class Block
     /**
      * Check if has block
      *
-     * @param    string $name
-     * @return   boolean
+     * @param  string $name
+     * @return bool
      */
     public function has($name)
     {
@@ -83,9 +76,9 @@ class Block
     }
 
     /**
-     * Begin  to catch block.
+     * Begin to catch block.
      *
-     * @return   void
+     * @return void
      */
     public function begin()
     {
@@ -95,9 +88,9 @@ class Block
     /**
      * End to catch block and save it.
      *
-     * @param    string  $name
-     * @param    boolean $append Append content to previous block. Otherwise, reset content.
-     * @return   void
+     * @param  string $name
+     * @param  bool   $append Append content to previous block. Otherwise, reset content.
+     * @return void
      */
     public function end($name, $append = true)
     {
@@ -111,5 +104,4 @@ class Block
 
         ob_end_clean();
     }
-
 }

@@ -13,11 +13,9 @@ namespace Eureka\Component\Template\Pattern;
  * Pattern interface for template compilation
  *
  * @author Romain Cottard
- * @version 2.1.0
  */
-interface Pattern
+interface PatternInterface
 {
-
     /**
      * Search & replace current defined pattern for template.
      *
@@ -29,7 +27,7 @@ interface Pattern
      * Set template content
      *
      * @param  string $templateContent
-     * @return Pattern
+     * @return static
      */
     public function setContent($templateContent);
 }

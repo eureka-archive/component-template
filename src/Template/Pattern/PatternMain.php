@@ -13,7 +13,6 @@ namespace Eureka\Component\Template\Pattern;
  * Pattern Main class.
  *
  * @author Romain Cottard
- * @version 2.1.0
  */
 class PatternMain extends PatternAbstract
 {
@@ -41,18 +40,17 @@ class PatternMain extends PatternAbstract
      *
      * </code>
      *
+     *
+     * {{ & }} ARE DEPRECATED
+     *
      * @return string Compiled template
      */
     public function render()
     {
         $pattern = array(
-            '{{'  => '<?php ',
-            '}}'  => '?>',
-            '{#'  => '<?php /* ',
-            '#}'  => ' */ ?>',
+            '{{' => '<?php ', '{%' => '<?php', '}}' => '?>', '%}' => '?>', '{#' => '<?php /* ', '#}' => ' */ ?>',
         );
 
         return $this->templateContent = trim(str_replace(array_keys($pattern), $pattern, $this->templateContent));
     }
-
 }

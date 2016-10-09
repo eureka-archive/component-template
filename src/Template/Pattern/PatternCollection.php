@@ -13,32 +13,26 @@ namespace Eureka\Component\Template\Pattern;
  * Pattern Collection class.
  *
  * @author Romain Cottard
- * @version 2.1.0
  */
 class PatternCollection implements \Iterator
 {
     /**
-     * Length of the collection
-     * @var integer $length
+     * @var int $length Length of the collection
      */
     protected $length = 0;
 
     /**
-     * Current position of the cursor in collection.
-     * @var integer
+     * @var int $index Current position of the cursor in collection.
      */
-    protected $index  = 0;
+    protected $index = 0;
 
     /**
-     * Collection of patterns.
-     * @var Pattern[] $collection
+     * @var PatternInterface[] $collection Collection of patterns.
      */
     protected $collection = array();
 
     /**
      * PatternCollection constructor.
-     *
-     * @return PatternCollection
      */
     public function __construct()
     {
@@ -48,10 +42,10 @@ class PatternCollection implements \Iterator
     /**
      * Add pattern object to the collection.
      *
-     * @param Pattern $pattern
-     * @return PatternCollection
+     * @param  PatternInterface $pattern
+     * @return self
      */
-    public function add(Pattern $pattern)
+    public function add(PatternInterface $pattern)
     {
         $this->collection[$this->length] = $pattern;
         $this->length++;
@@ -61,7 +55,8 @@ class PatternCollection implements \Iterator
 
     /**
      * Get length of the collection.
-     * @return integer
+     *
+     * @return int
      */
     public function length()
     {
@@ -71,7 +66,7 @@ class PatternCollection implements \Iterator
     /**
      * Get current pattern
      *
-     * @return Pattern
+     * @return PatternInterface
      */
     public function current()
     {
@@ -79,20 +74,9 @@ class PatternCollection implements \Iterator
     }
 
     /**
-     * Reset internal cursor.
-     *
-     * @return Pattern
-     */
-    public function reset()
-    {
-        $this->index = 0;
-
-        return $this;
-    }
-
-    /**
      * Get current key.
-     * @return integer
+     *
+     * @return int
      */
     public function key()
     {
@@ -113,6 +97,7 @@ class PatternCollection implements \Iterator
 
     /**
      * Go to the previous pattern.
+     *
      * @return PatternCollection
      */
     public function rewind()
@@ -124,11 +109,11 @@ class PatternCollection implements \Iterator
 
     /**
      * Check if have more pattern in the collection
-     * @return boolean
+     *
+     * @return bool
      */
     public function valid()
     {
         return ($this->index < $this->length);
     }
-
 }
