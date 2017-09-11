@@ -61,7 +61,7 @@ class Template implements TemplateInterface
      * @param  Pattern\PatternCollection $collection
      * @throws \Exception
      */
-    public function __construct($template, $collection = null, Array $vars = array())
+    public function __construct($template, $collection = null, array $vars = array())
     {
         $this->file         = $template . '.tpl';
         $this->vars         = $vars;
