@@ -35,7 +35,7 @@ abstract class PatternAbstract implements PatternInterface
      * Set template content
      *
      * @param  string $templateContent
-     * @return static
+     * @return self
      */
     public function setContent($templateContent)
     {

@@ -1,7 +1,7 @@
 <?php
 
-/**
- * Copyright (c) 2010-2016 Romain Cottard
+/*
+ * Copyright (c) Romain Cottard
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -16,15 +16,14 @@ namespace Eureka\Component\Template;
  */
 class Block
 {
-    /**
-     * @var Block $instance Class instance
-     */
+    /** @var Block $instance Class instance */
     protected static $instance = null;
 
-    /**
-     * @var array $blocks List of blocks html
-     */
-    protected $blocks = array();
+    /** @var string[] $blocks List of blocks html */
+    protected $blocks = [];
+
+    /** @var string[] $hashCache Cached list of hash. Avoid double append when block has been already rendered. */
+    protected $hashCache = [];
 
     /**
      * Block constructor.
@@ -95,13 +94,20 @@ class Block
     public function end($name, $append = true)
     {
         $content = trim(ob_get_contents());
+        ob_end_clean();
+
+        $hash = md5($content);
+
+        if (isset($this->hashCache[$hash])) {
+            return;
+        }
+
+        $this->hashCache[$hash] = true;
 
         if (isset($this->blocks[$name]) && $append) {
             $this->blocks[$name] .= $content;
         } else {
             $this->blocks[$name] = $content;
         }
-
-        ob_end_clean();
     }
 }

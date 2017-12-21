@@ -27,7 +27,7 @@ interface PatternInterface
      * Set template content
      *
      * @param  string $templateContent
-     * @return static
+     * @return self
      */
     public function setContent($templateContent);
 }

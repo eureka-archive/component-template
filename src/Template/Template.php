@@ -115,14 +115,15 @@ class Template implements TemplateInterface
      */
     public function render()
     {
-
         //~ Transform $this->vars into multiples variables.
         extract($this->vars);
 
         //~ Include Template as regular php file
         ob_start();
         include $this->fileCompiled;
-        $content = ob_get_clean();
+        $content = ob_get_contents();
+
+        ob_end_clean();
 
         return $content;
     }
